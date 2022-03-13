@@ -75,8 +75,8 @@ const ExampleComponent: React.FC = () => {
   return (
     <div>
       <h1>{state.text}</h1>
-      <button onClick={emit.Append("hello world")}>Append</button>
-      <button onClick={emit.Clear()}>Clear</button>
+      <button onClick={() => emit.Append("hello world")}>Append</button>
+      <button onClick={() => emit.Clear()}>Clear</button>
     </div>
   );
 };
