@@ -1,1 +1,1 @@
-export { useEventReducer } from "./useEventReducer";
+export { useEventReducer, Handlers, Emitters } from "./useEventReducer";
