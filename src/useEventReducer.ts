@@ -1,17 +1,12 @@
 import { ReducerAction, useCallback, useMemo, useReducer } from "react";
 
 export type Handlers<State, Events> = {
-  [Key in keyof Events]: (
-    state: State,
-    payload: Events[Key],
-    emitters: Emitters<Events>
-  ) => State;
+  [Key in keyof Events]: (state: State, payload: Events[Key]) => State;
 };
 
 type Action<Events, K extends keyof Events> = {
-  eventType: K;
+  event: K;
   payload: Events[K];
-  emitters: Emitters<Events>;
 };
 
 interface EventReducer<State, Events> {
@@ -32,8 +27,8 @@ export function useEventReducer<State, Events extends Record<string, any>>(
   type Event = keyof Events;
 
   const reducer: EventReducer<State, Events> = useCallback(
-    (state, { eventType, payload, emitters }) => {
-      return handlers[eventType](state, payload, emitters);
+    (state, { event, payload }) => {
+      return handlers[event](state, payload);
     },
     [handlers]
   );
@@ -41,23 +36,18 @@ export function useEventReducer<State, Events extends Record<string, any>>(
   const [state, dispatch] = useReducer(reducer, initial);
 
   const emit = useMemo(() => {
-    const localEmitterRef = Object.keys(handlers).reduce(
-      (emitBuilder, _eventType) => {
-        const eventType = _eventType as Event;
-        emitBuilder[eventType] = ((payload: Events[Event]) =>
-          dispatch({
-            eventType,
-            payload,
-            emitters: localEmitterRef,
-          } as ReducerAction<EventReducer<State, Events>>)) as Emitter<
-          Events[Event]
-        >;
-        return emitBuilder;
-      },
-      {} as Emitters<Events>
-    );
-    return localEmitterRef;
-  }, [handlers]);
+    const events = Object.keys(handlers) as Event[];
+    return events.reduce((emitters, event) => {
+      emitters[event] = ((payload: Events[Event]) =>
+        dispatch({
+          event,
+          payload,
+        } as ReducerAction<EventReducer<State, Events>>)) as Emitter<
+        Events[Event]
+      >;
+      return emitters;
+    }, {} as Emitters<Events>);
+  }, [handlers, dispatch]);
 
   return { state, emit };
 }
