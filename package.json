@@ -45,6 +45,10 @@
   "files": [
     "dist"
   ],
+  "homepage": "https://github.com/thehenrymcintosh/React-Use-Event-Reducer",
+  "bugs": {
+    "url": "https://github.com/thehenrymcintosh/React-Use-Event-Reducer/issues"
+  },
   "author": "Henry McIntosh",
   "license": "MIT"
 }
